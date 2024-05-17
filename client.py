@@ -56,8 +56,12 @@ def receive():
         try:
             #quando viene chiamata la funzione receive, si mette in ascolto dei messaggi che
             #arrivano sul socket
-            message = client_socket.recv(BUFSIZ)
-            if message == bytes("{quit}", "utf8"):
+            try:
+                message = client_socket.recv(BUFSIZ)
+            except Exception:
+                message = bytes("{quit}", "utf8")
+            #print(message.decode("utf8"))
+            if message == bytes("{quit}", "utf8") or message == bytes("", "utf8"):
                 print("La connessione con il server e' stata interrotta")
                 os._exit(1)
             msg=message.decode("utf8")
@@ -75,7 +79,10 @@ def send(event=None):
     # libera la casella di input.
     my_msg.set("")
     # invia il messaggio sul socket
-    client_socket.send(bytes(msg, "utf8"))
+    try:
+        client_socket.send(bytes(msg, "utf8"))
+    except Exception:
+        msg = "{quit}"
     if msg == "{quit}":
         client_socket.close()
         frame.quit()
@@ -86,8 +93,14 @@ def on_closing(event=None):
 
 def close(signum=None, frame=None):
     print("Uscendo dalla chat...")
-    my_msg.set("{quit}")
-    send()
+    try:
+        my_msg.set("{quit}")
+        send()
+    except NameError:
+        os._exit(0)
+
+#gestione del Cntrl + C
+signal.signal(signal.SIGINT, close)
 
 HOST, PORT = start_chat()
 
@@ -120,8 +133,6 @@ send_button = tkt.Button(frame, text="Invio", command=send)
 send_button.pack()
 
 frame.protocol("WM_DELETE_WINDOW", on_closing)
-#gestione del Cntrl + C
-signal.signal(signal.SIGINT, close)
 
 #----Connessione al Server----
 

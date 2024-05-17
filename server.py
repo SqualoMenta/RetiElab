@@ -20,8 +20,12 @@ def new_client_accept():
 
 """La funzione seguente gestisce la connessione di un singolo client."""
 def client_handler(socket_client):
-    message = socket_client.recv(BUFSIZ)
-    if message != bytes("{quit}", "utf8"):
+    try:
+        message = socket_client.recv(BUFSIZ)
+    except Exception:
+            print("la connessione con %s:%s si e' interrotta" % addresses[socket_client])
+            message = bytes("{quit}", "utf8")
+    if message != bytes("{quit}", "utf8") and message != bytes("", "utf8"):
         name = message.decode("utf8")
         benvenuto = 'Benvenuto %s! Se vuoi lasciare la Chat, scrivi {quit} per uscire.' % name
         socket_client.send(bytes(benvenuto, "utf8"))
@@ -32,8 +36,13 @@ def client_handler(socket_client):
         
         #si mette in ascolto del thread del singolo client e ne gestisce l'invio dei messaggi o l'uscita dalla Chat
         while True:
-            msg = socket_client.recv(BUFSIZ)
-            if msg != bytes("{quit}", "utf8"):
+            try:
+                msg = socket_client.recv(BUFSIZ)
+            except Exception:
+                print("la connessione con %s:%s si e' interrotta" % addresses[socket_client])
+                msg = bytes("{quit}", "utf8")
+            #print(msg.decode("utf8"))
+            if msg != bytes("{quit}", "utf8") and msg != bytes("", "utf8"):
                 broadcast(msg, name + ": ")
             else:
                 socket_client.close()
@@ -50,12 +59,20 @@ def client_handler(socket_client):
 
 """ La funzione, che segue, invia un messaggio in broadcast a tutti i client."""
 def broadcast(msg, prefisso=""):
-    for user in clients:
-        user.send(bytes(prefisso, "utf8")+msg)
+    for user in clients.copy():
+        try:
+            user.send(bytes(prefisso, "utf8")+msg)
+        except BrokenPipeError:
+            print("la connessione con %s:%s si e' interrotta" % addresses[user])
+            user.close()
+            del clients[user]
         
 def close_server(signum, frame):
     #in caso di chiusura del server si invia un messaggio di disconnessione a tutti i client
     broadcast(bytes("{quit}", "utf8"))
+    for client in clients:
+        client.close()
+        del clients[client]
     print("Terminazione del server...")
     os._exit(0)
 

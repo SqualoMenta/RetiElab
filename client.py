@@ -15,7 +15,8 @@ PORT=''
 def start_chat():
     global HOST, PORT
     finestra = tkt.Tk()
-    finestra.title("Inserimento dati")
+    finestra.title("WhatsChat")
+    finestra.configure(bg='lightblue')
 
     def confirm_values():
         global HOST, PORT
@@ -23,18 +24,18 @@ def start_chat():
         PORT = entry_port.get()
         finestra.destroy()  # Chiude la finestra dopo aver confermato i valori
 
-    label_host = tkt.Label(finestra, text = "Inserire l'ip del Server host:")
-    label_host.pack()
-    entry_host = tkt.Entry(finestra)
-    entry_host.pack()
+    label_host = tkt.Label(finestra, text="Inserire l'ip del Server host:", bg='lightblue', font=('Arial', 12))
+    label_host.pack(pady=5)
+    entry_host = tkt.Entry(finestra, font=('Arial', 12))
+    entry_host.pack(pady=5)
 
-    label_port = tkt.Label(finestra, text = "Inserire la porta: (Default %i)" % DEFAULT_PORT)
-    label_port.pack()
-    entry_port = tkt.Entry(finestra)
-    entry_port.pack()
+    label_port = tkt.Label(finestra, text="Inserire la porta: (Default %i)" % DEFAULT_PORT, bg='lightblue', font=('Arial', 12))
+    label_port.pack(pady=5)
+    entry_port = tkt.Entry(finestra, font=('Arial', 12))
+    entry_port.pack(pady=5)
 
-    button_conferma = tkt.Button(finestra, text="Conferma", command=confirm_values)
-    button_conferma.pack()
+    button_conferma = tkt.Button(finestra, text="Conferma", command=confirm_values, bg='blue', fg='white', font=('Arial', 12))
+    button_conferma.pack(pady=10)
 
     finestra.mainloop()
 
@@ -105,32 +106,33 @@ signal.signal(signal.SIGINT, close)
 HOST, PORT = start_chat()
 
 frame = tkt.Tk()
-frame.title("CHAT")
+frame.title("WhatsChat")
+frame.configure(bg='lightblue')
 
 #creiamo il Frame per contenere i messaggi
-messages_frame = tkt.Frame(frame)
+messages_frame = tkt.Frame(frame, bg='lightblue')
 #creiamo una variabile di tipo stringa per i messaggi da inviare.
 my_msg = tkt.StringVar()
 #creiamo una scrollbar per navigare tra i messaggi precedenti.
 scrollbar = tkt.Scrollbar(messages_frame)
 
 # La parte seguente contiene i messaggi.
-msg_list = tkt.Listbox(messages_frame, height=15, width=50, yscrollcommand=scrollbar.set)
+msg_list = tkt.Listbox(messages_frame, height=15, width=50, yscrollcommand=scrollbar.set, font=('Arial', 12))
 scrollbar.pack(side=tkt.RIGHT, fill=tkt.Y)
-msg_list.pack(side=tkt.LEFT, fill=tkt.BOTH)
+msg_list.pack(side=tkt.LEFT, fill=tkt.BOTH, pady=10)
 msg_list.pack()
-messages_frame.pack()
+messages_frame.pack(pady=10)
 
 #Creiamo il campo di input e lo associamo alla variabile stringa
-entry_field = tkt.Entry(frame, textvariable=my_msg)
+entry_field = tkt.Entry(frame, textvariable=my_msg, font=('Arial', 12), bg='white', fg='black')
 # leghiamo la funzione send al tasto Return
 entry_field.bind("<Return>", send)
 
-entry_field.pack()
+entry_field.pack(pady=5)
 #creiamo il tasto invio e lo associamo alla funzione send
-send_button = tkt.Button(frame, text="Invio", command=send)
+send_button = tkt.Button(frame, text="Invio", command=send, bg='blue', fg='white', font=('Arial', 12))
 #integriamo il tasto nel pacchetto
-send_button.pack()
+send_button.pack(pady=5)
 
 frame.protocol("WM_DELETE_WINDOW", on_closing)
 

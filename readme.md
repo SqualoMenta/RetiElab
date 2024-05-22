@@ -1,6 +1,9 @@
+# Descrizione
+Il progetto consiste in una semplice chat tra un server e vari clients. Il server viene aperto prima dei clients e permette lo scambio dei messaggi. Ai vari utenti viene associata una gui per permettere un migliore scambio dei messaggi. Il sistema sfrutta il TCP e la programmazione concorrente tramite threads basandosi sul linguaggio python.
+
 # Server
 
-server.py contiene lo script per far partire il server che gestisce la comunicazione tra client della chat.
+`server.py` contiene lo script per far partire il server che gestisce la comunicazione tra client della chat.
 
 Una volta lanciato lo script viene associata a Cntrl + c una funzione per terminare il server, che invia a tutti i client un messaggio di chiusura.
 Dopo di che viene creato un socket TCP e viene poi associato all'HOST (0.0.0.0) e poi alla porta, che viene presa in input oppure le è assegnato un valore di default.
@@ -69,7 +72,7 @@ else:
 
 Lo script Client.py inizia chimando la funzione `start_chat()` che fornisce all'utente un'interfaccia per inserire l'ip e la porta del server.
 
-![Immagine dell'interfaccia](/Screenshot%202024-05-16%20192415.png)
+![Immagine dell'interfaccia](/Dati.png)
 
 Poi vengono definite le caratteristiche della finestra della chat effettiva
 e viene associata una funzione `close(signum=None, frame=None)` a Cntrl + c.
@@ -131,4 +134,14 @@ if msg == "{quit}":
 
 # Funzionamento e considerazioni
 
-Per utilizzare la chat e' sempre necessario avviare prima il server e dopo si possono avviare fino a MAX_CLIENTS client. La connessione in questo caso non e' sicura poiche' i messaggi non sono criptati, non c'e' nessuna forma di segnalazione dell'orario di invio dei messaggi, quindi non e' possibile risalire all'ordine con cui i messaggi sono stati inviati e infine non e' possibile ricevere messaggi dopo la chiusura del server quindi alcuni messaggi potrebbero non giungere mai al destinatario.
+## Requisito
+
+Avere installato python, nel caso dei client e` anche neccesario che ci sia un server.
+
+## Avvio
+
+Per utilizzare la chat e' sempre necessario avviare prima il server e dopo si possono avviare fino a `MAX_CLIENTS` client.
+
+## Considerazioni
+
+Al client non e` permesso lasciare vuoto l'indirizzo ip e viene lasciato un timeout di 2 secondi per collegarsi al server nel caso in cui la connessione non riesca ad andare a buon fine.
